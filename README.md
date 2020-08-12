@@ -8,3 +8,8 @@ Driver with a modern C++ interface.
 
 - Currently only slave function is supported.
 - GCC toolchain makes a too large binary. To be fixed.
+
+## About
+
+Linker script and startup code are from Quantum Leaps lessons
+(http://www.state-machine.com/quickstart/).
