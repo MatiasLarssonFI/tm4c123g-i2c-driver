@@ -1,12 +1,3 @@
-# Tiva Makefile
-# #####################################
-#
-# Part of the uCtools project
-# uctools.github.com
-#
-#######################################
-# user configuration:
-#######################################
 # TARGET: name of the output file
 TARGET = main
 # MCU: part number to build for
@@ -23,31 +14,27 @@ LD_SCRIPT = $(MCU).lds
 
 FLOAT_ABI = softfp
 
-# define flags
+# flags
 CFLAGS = -g -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=$(FLOAT_ABI)
 CFLAGS +=-Os -ffunction-sections -fdata-sections -MD -Wall
 CFLAGS += -DPART_$(MCU) -c $(INCLUDES)
 CFLAGS += -DTARGET_IS_TM4C123_RB2 -D__FPU_PRESENT
-CXXFLAGS := $(CFLAGS) -std=c++11 -fno-rtti -fno-exceptions
+CXXFLAGS := $(CFLAGS) -std=c++11 -fno-rtti -fno-exceptions -fno-threadsafe-statics
 CFLAGS += -std=c99
-LDFLAGS = -T $(LD_SCRIPT) --entry Reset_Handler
-LDFLAGS += --specs=nosys.specs
-LDFLAGS += -mfloat-abi=$(FLOAT_ABI)
+LDFLAGS = -T $(LD_SCRIPT) --entry Reset_Handler -specs=nosys.specs
+LDFLAGS += -mthumb -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=$(FLOAT_ABI) -Wl,--gc-sections -Wl,-Map=i2cdriver.map
 
-#######################################
-# end of user configuration
-#######################################
-#
-#######################################
+
+
 # binaries
-#######################################
+
 CC = arm-none-eabi-gcc
 CXX = arm-none-eabi-g++
 LD = arm-none-eabi-g++
 OBJCOPY = arm-none-eabi-objcopy
 RM      = rm -f
 MKDIR	= mkdir -p
-#######################################
+
 
 # list of object files, placed in the build directory regardless of source path
 OBJECTS = $(addprefix $(OUTDIR)/,$(notdir $(patsubst %.cpp,%.o,$(patsubst %.c,%.o,$(SOURCES)))))

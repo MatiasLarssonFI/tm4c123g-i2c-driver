@@ -43,10 +43,10 @@ MEMORY { /* memory map of Tiva TM4C123GH6PM */
 }
 
 /* The size of the stack used by the application. NOTE: you need to adjust  */
-STACK_SIZE = 512;
+STACK_SIZE = 4K;
 
 /* The size of the heap used by the application. NOTE: you need to adjust   */
-HEAP_SIZE = 0;
+HEAP_SIZE = 8K;
 
 SECTIONS {
 
@@ -87,7 +87,15 @@ SECTIONS {
         KEEP (*(SORT(.fini_array.*)))
         PROVIDE_HIDDEN (__fini_array_end = .);
     } >ROM
-
+    
+    /* exidx stuff exported for the toolchain */
+    __exidx_start = .;
+    .ARM.exidx :
+    {
+        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+    } > ROM
+    __exidx_end = .;
+    
     _etext = .;            /* global symbols at end of code */
 
     .stack : {
@@ -127,12 +135,4 @@ SECTIONS {
         . = ALIGN(4);
         __heap_end__ = .;
     } >RAM
-
-    /* Remove information from the standard libraries */
-    /DISCARD/ : {
-        libc.a ( * )
-        libm.a ( * )
-        libgcc.a ( * )
-    }
-    
 }
