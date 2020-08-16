@@ -26,7 +26,7 @@ class I2CModuleController {
         
         
         //! Initialize the peripheral and module
-        void initSlave(uint8_t address, t_int_callback cb) noexcept {
+        void initSlave(std::uint8_t address, t_int_callback cb) noexcept {
             this->initCommon();
             // Enable the I2C slave
             HWREG(TModule::masterCfgRegAddr) |= masterCfgSlaveEnable;
