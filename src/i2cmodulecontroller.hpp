@@ -56,8 +56,8 @@ class I2CModuleController {
         void interrupt() const noexcept {
             if (m_isInitialized) {
                 m_intCB(I2CInterruptContext{
-                    HWREG(TModule::slaveCtlStatusRegAddr),
-                    HWREG(TModule::slaveDataRegAddr)
+                    HWREG(TModule::slaveCtlStatusRegAddr) & slaveStatusBits,
+                    HWREG(TModule::slaveDataRegAddr) & slaveDataBits
                 });
                 HWREG(TModule::slaveIntClearRegAddr) = 1U; // clear the interrupt
             }
@@ -68,8 +68,8 @@ class I2CModuleController {
         I2CModuleController& operator = (I2CModuleController const &) = delete;
         
         
-        static constexpr std::uint_fast32_t slaveStatusFBR = 0x5U;
-        static constexpr std::uint_fast32_t slaveStatusRREQ = 0x1U;
+        static constexpr std::uint_fast8_t slaveStatusFBR = 0x5U;
+        static constexpr std::uint_fast8_t slaveStatusRREQ = 0x1U;
     private:
         I2CModuleController()
             : m_isInitialized(false)
@@ -100,6 +100,8 @@ class I2CModuleController {
         
         static constexpr std::uint_fast8_t masterCfgSlaveEnable = (1U << 5);
         static constexpr std::uint_fast8_t slaveDataInterrupt = 1U;
+        static constexpr std::uint_fast8_t slaveStatusBits = 0xf;
+        static constexpr std::uint_fast32_t slaveDataBits = 0xff;
 };
 
 #endif
