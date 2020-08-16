@@ -5,7 +5,9 @@
 #include "tm4c_cmsis.h"
 #include "i2cmodule.hpp"
 
-I2CModule<1> i2cModule1{};
+using I2CModule1 = I2CModule<1>;
+
+I2CModule1 i2cModule1{};
 
 int main() {
     SYSCTL->RCGC2 |= (1U << 5); // enable clock for GPIOF
@@ -15,8 +17,8 @@ int main() {
     GPIOF_HS->DEN |= (LED_RED | LED_BLUE | LED_GREEN); // digital enable
     
     i2cModule1.initSlave(0x60U, [] (I2CInterruptContext ctx) {
-        if (ctx.slaveStatus == I2CModule<1>::slaveStatusRREQ) {
-            if (ctx.slaveData > 0 && ctx.slaveData < 4) {
+        if (ctx.slaveStatus == I2CModule1::slaveStatusRREQ) {
+            if (ctx.slaveData > 0U && ctx.slaveData < 4U) {
                 // toggle requested LED
                 const std::uint_fast8_t led = (1U << ctx.slaveData);
                 GPIOF_HS->DATA_Bits[led] ^= led;

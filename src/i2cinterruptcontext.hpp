@@ -3,9 +3,11 @@
 
 #include <cstdint>
 
+#include "i2ctypes.hpp"
+
 struct I2CInterruptContext {
-    const std::uint_fast8_t slaveStatus;
-    const std::uint_fast32_t slaveData;
+    const t_slave_status slaveStatus;
+    const t_slave_data slaveData;
 };
 
 #endif

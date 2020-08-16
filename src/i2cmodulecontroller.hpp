@@ -4,8 +4,8 @@
 #include <functional>
 #include <cstdint>
 
-#include "tm4c_cmsis.h"
 #include "i2cinterruptcontext.hpp"
+#include "i2ctypes.hpp"
 
 
 //! I2C module controller
@@ -68,8 +68,8 @@ class I2CModuleController {
         I2CModuleController& operator = (I2CModuleController const &) = delete;
         
         
-        static constexpr std::uint_fast8_t slaveStatusFBR = 0x5U;
-        static constexpr std::uint_fast8_t slaveStatusRREQ = 0x1U;
+        static constexpr t_slave_status slaveStatusFBR = 0x5U;
+        static constexpr t_slave_status slaveStatusRREQ = 0x1U;
     private:
         I2CModuleController()
             : m_isInitialized(false)
@@ -100,8 +100,8 @@ class I2CModuleController {
         
         static constexpr std::uint_fast8_t masterCfgSlaveEnable = (1U << 5);
         static constexpr std::uint_fast8_t slaveDataInterrupt = 1U;
-        static constexpr std::uint_fast8_t slaveStatusBits = 0xf;
-        static constexpr std::uint_fast32_t slaveDataBits = 0xff;
+        static constexpr t_slave_status slaveStatusBits = 0xf;
+        static constexpr t_slave_data slaveDataBits = 0xff;
 };
 
 #endif
