@@ -7,7 +7,7 @@ Driver with a modern C++ interface.
 ## Known issues
 
 - Currently only slave function is supported.
-- Currently the library only provides support for receiving data in slave mode.
+- Currently the driver only provides support for receiving data in slave mode.
 
 ## About
 
