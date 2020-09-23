@@ -29,12 +29,12 @@ class I2CModuleController {
         void initSlave(std::uint8_t address, t_int_callback cb) noexcept {
             this->initCommon();
             // Enable the I2C slave
-            HWREG(TModule::masterCfgRegAddr) |= masterCfgSlaveEnable;
-            HWREG(TModule::slaveCtlStatusRegAddr) = 1U;
+            HWREG(masterCfgRegAddr) |= masterCfgSlaveEnable;
+            HWREG(slaveCtlStatusRegAddr) = 1U;
             // Set slave own address
-            HWREG(TModule::slaveOwnAddrRegAddr) = address;
+            HWREG(slaveOwnAddrRegAddr) = address;
             // Enable the I2C slave data interrupt
-            HWREG(TModule::slaveIntMaskRegAddr) |= slaveDataInterrupt;
+            HWREG(slaveIntMaskRegAddr) |= slaveDataInterrupt;
             m_intCB = std::move(cb);
             m_isInitialized = true;
         }
@@ -43,12 +43,12 @@ class I2CModuleController {
         //! Reset the peripheral
         void resetPeripheral() const noexcept {
             // set reset bit
-            SRI2C_REG |= TModule::sysCtlPeripheral;
+            SRI2C_REG |= sysCtlPeripheral;
             // short delay here
             for(std::uint_fast8_t delay = 0; delay < 16U; ++delay)
                 ;
             // clear reset bit
-            SRI2C_REG &= ~TModule::sysCtlPeripheral;
+            SRI2C_REG &= ~sysCtlPeripheral;
         }
         
         
@@ -56,10 +56,10 @@ class I2CModuleController {
         void interrupt() const noexcept {
             if (m_isInitialized) {
                 m_intCB(I2CInterruptContext{
-                    HWREG(TModule::slaveCtlStatusRegAddr) & slaveStatusBits,
-                    HWREG(TModule::slaveDataRegAddr) & slaveDataBits
+                    HWREG(slaveCtlStatusRegAddr) & slaveStatusBits,
+                    HWREG(slaveDataRegAddr) & slaveDataBits
                 });
-                HWREG(TModule::slaveIntClearRegAddr) = 1U; // clear the interrupt
+                HWREG(slaveIntClearRegAddr) = 1U; // clear the interrupt
             }
         }
         
@@ -77,19 +77,19 @@ class I2CModuleController {
         
         void initCommon() const noexcept {
             // system control: enable I2C module clock
-            RCGCI2C_REG |= TModule::sysCtlPeripheral;
+            RCGCI2C_REG |= sysCtlPeripheral;
             // reset peripheral
             resetPeripheral();
             // system control: enable GPIO module clock
-            RCGCGPIO_REG |= TModule::sysCtlGPIOPeripheral;
+            RCGCGPIO_REG |= TModule::gpioPort::sysCtlPeripheral;
             // Select peripheral (i.e. I2C) function for the pins
-            HWREG(TModule::gpioAFSelRegAddr) |= (TModule::gpioPortDataPin | TModule::gpioPortClockPin);
+            HWREG(TModule::gpioPort::AFSelRegAddr) |= (TModule::gpioPortDataPin | TModule::gpioPortClockPin);
             // Enable data pin for open drain
-            HWREG(TModule::gpioOpenDrainRegAddr) |= TModule::gpioPortDataPin;
+            HWREG(TModule::gpioPort::openDrainRegAddr) |= TModule::gpioPortDataPin;
             // Assing I2C signals to pins
-            HWREG(TModule::gpioPortCtlRegAddr) |= TModule::gpioPortCtlMask;
+            HWREG(TModule::gpioPort::ctlRegAddr) |= TModule::gpioPortCtlMask;
             // Select digital enable for the pins
-            HWREG(TModule::gpioDigitalEnableRegAddr) |= (TModule::gpioPortDataPin | TModule::gpioPortClockPin);
+            HWREG(TModule::gpioPort::digitalEnableRegAddr) |= (TModule::gpioPortDataPin | TModule::gpioPortClockPin);
             // Enable the I2C NVIC interrupt
             HWREG(TModule::nvicIntEnableRegAddr) |= TModule::nvicIntEnableMask;
         }
@@ -102,6 +102,15 @@ class I2CModuleController {
         static constexpr std::uint_fast8_t slaveDataInterrupt = 1U;
         static constexpr t_slave_status slaveStatusBits = 0xf;
         static constexpr t_slave_data slaveDataBits = 0xff;
+        
+        static constexpr t_register_addr slaveOwnAddrRegAddr = TModule::moduleSlaveBase;
+        static constexpr t_register_addr slaveCtlStatusRegAddr = TModule::moduleSlaveBase + 4U;
+        static constexpr t_register_addr slaveDataRegAddr = TModule::moduleSlaveBase + 8U;
+        static constexpr t_register_addr slaveIntMaskRegAddr = TModule::moduleSlaveBase + 0xCU;
+        static constexpr t_register_addr slaveIntClearRegAddr = TModule::moduleSlaveBase + 0x18U;
+        static constexpr t_register_addr masterCfgRegAddr = TModule::moduleMasterBase + 0x20U;
+        
+        static constexpr std::uint_fast8_t sysCtlPeripheral = (1U << TModule::moduleIndex);
 };
 
 #endif

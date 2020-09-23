@@ -5,7 +5,7 @@
 #include "tm4c_cmsis.h"
 #include "i2cmodule.hpp"
 
-using I2CModule1 = I2CModule<1>;
+using I2CModule1 = I2CModule<1U>;
 
 I2CModule1 i2cModule1{};
 

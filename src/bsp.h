@@ -32,22 +32,9 @@
 // Address of port control for GPIO port A
 #define GPIOPCTL_PORTA (GPIO_PORTA_BASE + 0x52CU)
 
-// Address of I2C1 master configuration register
-#define I2C1_MCR (I2C1_MASTER_BASE + 0x20U)
-
-// Address of I2C1 slave control/status register
-#define I2C1_SLAVE_SCSR (I2C1_SLAVE_BASE + 4U)
-
-// Address of I2C1 slave data register
-#define I2C1_SLAVE_DATA (I2C1_SLAVE_BASE + 8U)
-
-// Address of I2C1 slave interrupt mask register
-#define I2C1_SLAVE_IM (I2C1_SLAVE_BASE + 0xCU)
-
-// Address of I2C1 slave interrupt clear register
-#define I2C1_SLAVE_SICR (I2C1_SLAVE_BASE + 0x18U)
-
 // Address of I2C1 NVIC interrupt enable register
 #define I2C1_NVIC_INT_ENABLE_R (0xE000E104) // interrupt 37
+
+// I2C1_MASTER_BASE and I2C1_SLAVE_BASE are defined in cmsis
 
 #endif // __BSP_H__

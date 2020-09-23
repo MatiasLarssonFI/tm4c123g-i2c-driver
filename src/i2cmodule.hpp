@@ -6,6 +6,7 @@
 #include "bsp.h"
 #include "i2cmodulecontroller.hpp"
 #include "i2ctypes.hpp"
+#include "gpioport.hpp"
 
 
 /*
@@ -27,19 +28,20 @@ class I2CModule {};
 
 //! I2C module 1, GPIO Port A, pins 6 (clock) and 7 (data)
 template <>
-class I2CModule<1> {
+class I2CModule<1U> {
     public:
+        static constexpr std::uint_least8_t moduleIndex = 1U;
+        using t_cntl = I2CModuleController<I2CModule<moduleIndex>>;
+        
         I2CModule()
             : m_cntl(t_cntl::instance())
             {}
         
-        using t_self = I2CModule<1>;
-        
-        static constexpr t_slave_status slaveStatusFBR = I2CModuleController<t_self>::slaveStatusFBR;
-        static constexpr t_slave_status slaveStatusRREQ = I2CModuleController<t_self>::slaveStatusRREQ;
+        static constexpr t_slave_status slaveStatusFBR = t_cntl::slaveStatusFBR;
+        static constexpr t_slave_status slaveStatusRREQ = t_cntl::slaveStatusRREQ;
             
         //! Initialize the perihperal and module
-        void initSlave(std::uint8_t address, I2CModuleController<t_self>::t_int_callback cb) noexcept {
+        void initSlave(std::uint8_t address, t_cntl::t_int_callback cb) noexcept {
             m_cntl.initSlave(address, std::move(cb));
         }
         
@@ -49,20 +51,10 @@ class I2CModule<1> {
         //! Interrupt handler
         void interrupt() const noexcept { m_cntl.interrupt(); };
         
-        static constexpr std::uint_fast8_t sysCtlPeripheral = (1U << 1);
-        static constexpr std::uint_fast8_t sysCtlGPIOPeripheral = (1U << 0);
+        static constexpr t_register_addr moduleSlaveBase = I2C1_SLAVE_BASE;
+        static constexpr t_register_addr moduleMasterBase = I2C1_MASTER_BASE;
         
-        static constexpr t_register_addr slaveOwnAddrRegAddr = I2C1_SLAVE_BASE;
-        static constexpr t_register_addr slaveCtlStatusRegAddr = I2C1_SLAVE_SCSR;
-        static constexpr t_register_addr slaveDataRegAddr = I2C1_SLAVE_DATA;
-        static constexpr t_register_addr slaveIntMaskRegAddr = I2C1_SLAVE_IM;
-        static constexpr t_register_addr slaveIntClearRegAddr = I2C1_SLAVE_SICR;
-        
-        static constexpr t_register_addr gpioAFSelRegAddr = GPIOAFSEL_PORTA;
-        static constexpr t_register_addr gpioOpenDrainRegAddr = GPIOODR_PORTA;
-        static constexpr t_register_addr gpioPortCtlRegAddr = GPIOPCTL_PORTA;
-        static constexpr t_register_addr gpioDigitalEnableRegAddr = GPIODEN_PORTA;
-        static constexpr t_register_addr masterCfgRegAddr = I2C1_MCR;
+        using gpioPort = GPIOPort<0xA>;
         static constexpr t_register_addr nvicIntEnableRegAddr = I2C1_NVIC_INT_ENABLE_R;
         
         static constexpr std::uint_fast8_t gpioPortDataPin = (1U << 7);
@@ -71,8 +63,6 @@ class I2CModule<1> {
         static constexpr std::uint_fast8_t nvicIntEnableMask = (1U << 5); // interrupt 37
         
     private:
-        using t_cntl = I2CModuleController<t_self>;
-        
         t_cntl & m_cntl;
 };
 
