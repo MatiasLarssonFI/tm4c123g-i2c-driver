@@ -59,7 +59,7 @@ class I2CModuleController {
                     HWREG(slaveCtlStatusRegAddr) & slaveStatusBits,
                     HWREG(slaveDataRegAddr) & slaveDataBits
                 });
-                HWREG(slaveIntClearRegAddr) = 1U; // clear the interrupt
+                HWREG(slaveIntClearRegAddr) = slaveDataInterrupt; // clear the interrupt
             }
         }
         
