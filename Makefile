@@ -5,7 +5,7 @@ MCU = TM4C123GH6PM
 # SOURCES: list of input source sources
 SOURCES = main.cpp bsp.cpp startup_tm4c_gnu.c
 # INCLUDES: list of includes, by default, use Includes directory
-INCLUDES = -I$(HOME)/embedded/cmsis/Include
+INCLUDES = -I$(HOME)/embedded/cmsis/Include -I$(HOME)/embedded/include/tm4c
 # OUTDIR: directory to use for output
 OUTDIR = build
 
